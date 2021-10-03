@@ -2,33 +2,37 @@ import java.util.Arrays;
 
 class Bloc {
     public int size;
-    private int[] array;
+    private boolean[] array;
+
+    public static random(int size) {
+        boolean[] masterKey = new boolean[this.size];
+        for (int i = 0; i < this.size; i++) {
+            masterKey[i] = Math.random() * 2 < 1
+            //masterKey[i] = (int)(Math.random() * 2);
+        }
+        return 
+    }
     public Bloc(int size) {
         this.size = size;
         this.array = new int[size];
     }
-    public Bloc(int[] array) {
+    public Bloc(boolean[] array) {
         this.size = array.length;
         this.array = array;
     }
-    public int[] toArray() {
+    public boolean[] toArray() {
         return this.array;
     } 
     public void shift() {
         // Decalage de 1 bit vers la gauche
-        int n = this.array[0];
+        boolean b = this.array[0];
         for (int i = 0; i < this.array.length - 2; i++) {
             this.array[i] = this.array[i+1];
         } 
-        this.array[this.array.length - 1] = n;
+        this.array[this.array.length - 1] = b;
     } 
-    /*
-    public int get(int i) {
-        return this.array[i];
-    } */ 
     public void permut(int[] permBloc) {
-
-        int[] permArr = new int[this.size];
+        boolean[] permArr = new boolean[this.size];
         for (int i = 0; i < this.size; i++) {
             permArr[i] = this.array[permBloc[i]-1]; 
         }
@@ -36,7 +40,7 @@ class Bloc {
     }
     public void invPermut(int[] permBloc) {
 
-        int[] arr = new int[this.size];
+        boolean[] arr = new boolean[this.size];
         for (int i = 0; i < this.size; i++) {
             arr[permBloc[i]-1] = this.array[i]; 
         }
@@ -44,7 +48,24 @@ class Bloc {
     }
     @Override
     public String toString() {
-        return Arrays.toString(this.array);
+        String str = "[";
+        for (int i = 0; i < this.size; i++) {
+            if (this.array[i])
+                str += "1"; 
+            else 
+                str += "0"; 
+            if (i < this.size - 1) 
+                str += ", "
+        }
+        return str+"]";
+    }
+    public Bloc subBlock(int i, int j) {
+        boolean arr = new boolean[this.size - (i-j)];
+        
+        for (int index = i; index < j; index++) {
+            arr[index-i] = this.array[index];
+        }
+        return Bloc bloc(arr);
     }
     public Bloc[] split() {
         int i = this.size/2;
@@ -54,7 +75,7 @@ class Bloc {
         }; 
     }
     static Bloc combine(Bloc blocA, Bloc blocB) {
-        int[] arr = new int[blocA.size + blocB.size];
+        boolean[] arr = new boolean[blocA.size + blocB.size];
         System.arraycopy(blocA.toArray(), 0, arr, 0, blocA.size);
         System.arraycopy(blocB.toArray(), 0, arr, blocA.size, blocB.size);
         return new Bloc(arr);
@@ -62,7 +83,7 @@ class Bloc {
     static Bloc combine(Bloc[] blocs) {
         Bloc blocA = blocs[0];
         Bloc blocB = blocs[1]; 
-        int[] arr = new int[blocA.size + blocB.size];
+        boolean[] arr = new boolean[blocA.size + blocB.size];
         System.arraycopy(blocA.toArray(), 0, arr, 0, blocA.size);
         System.arraycopy(blocB.toArray(), 0, arr, blocA.size, blocB.size);
         return new Bloc(arr);

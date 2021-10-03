@@ -34,7 +34,7 @@ class Des {
         return output;
     }
 
-    private Bloc[] decoupage(int[] binArray) {
+    private Bloc[] decoupage(boolean[] binArray) {
         int quantity = (binArray.length + this.size - 1) / this.size; // binArray.length / size et arrondir au dessus
         Bloc[] blocs = new Bloc[quantity];
         for (int i = 0; i < binArray.length; i += this.size) {
@@ -42,13 +42,11 @@ class Des {
         }
         return blocs;
     }    
-    private Bloc generateKey() {
-        int[] masterKey = new int[this.size];
-        for (int i = 0; i < this.size; i++) {
-            masterKey[i] = (int)(Math.random() * 2);
-        }
 
-        Bloc key = new Bloc(Arrays.copyOfRange(masterKey, 0, this.size - 8));
+    private Bloc generateKey() {
+        Bloc masterKey = Bloc.random(this.size); // masterKey
+        Bloc key = masterKey.subBlock(0, this.size - 8);
+
         Bloc[] keys = key.split();      
         keys[0].shift();
         keys[1].shift();
@@ -57,14 +55,13 @@ class Des {
         return null;
     }
     private int processK(Bloc G, Bloc D, int n) {
-        
         Bloc masterKey = generateKey() ;
         
         return 0;
     }
     public int[] crypte(String msg) {
-        int[] binaryString = stringToBinaryArray(msg) ;
-        this.blocs = decoupage(binaryString);
+        this.blocs = decoupage(stringToBinaryArray(msg));
+
         for (int i = 0; i < this.blocs.length; i++) {
             Bloc b = this.blocs[i];
             // Permutation initial
@@ -80,6 +77,7 @@ class Des {
             this.blocs[i].invPermut(this.permInit);
         }
         System.out.println(Arrays.deepToString(this.blocs));
+        
         return null;
     }
 
