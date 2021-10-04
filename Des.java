@@ -78,18 +78,26 @@ class Des {
         int n = 0;
         for (int i = 0; i < bools.length; i++) {
             // decalage de bits vers la gauche pour calculer les puissances de deux
-            n = 1 << i; // = 2 ^ i
+            if (bools[i])
+                n += 1 << i; // = 2 ^ i
         }
         return n;
     }
     private boolean[] intToBinaryArray(int n, int size) {
-        return null;
+        boolean[] b = new boolean[size];
+        int i = size-1;  // on remplie a l'envers
+        for (char c : Integer.toBinaryString(n).toCharArray()) {
+            b[i] = c == '1';
+            i--;
+        }
+        return b;
     }
 
 
     private Bloc substitution(Bloc b) {
         int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)});
         int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)}); 
+
         return new Bloc(intToBinaryArray(S1[i][j], 4));
     } 
 
