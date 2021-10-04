@@ -58,11 +58,13 @@ class Des {
         // TODO: clé de 48 bit
         return key;
     }
+
     private int processK(Bloc G, Bloc D, int n) {
         Bloc masterKey = generateKey() ;
         
         return 0;
     }
+    
     public int[] crypte(String msg) {
         this.blocs = decoupage(stringToBinaryArray(msg));
 
