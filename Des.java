@@ -19,15 +19,15 @@ class Des {
 
     private Bloc[] blocs;
 
-    public static int[] stringToBinaryArray(String msg) {
+    public static boolean[] stringToBinaryArray(String msg) {
         byte[] bytes = msg.getBytes();
-        int[] output = new int[bytes.length * 8];
+        boolean[] output = new boolean[bytes.length * 8];
         int j = 0;
         for (int i = 0; i < bytes.length; i++) {
             String binaryString = String.format("%8s", Integer.toBinaryString(bytes[i] & 0xFF)).replace(' ', '0');
 
             for (char c : binaryString.toCharArray()) {
-                output[j] = Character.getNumericValue(c);
+                output[j] = (c == '1');
                 j++;
             }
         }
