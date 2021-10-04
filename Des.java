@@ -23,11 +23,10 @@ class Des {
         byte[] bytes = msg.getBytes();
         boolean[] output = new boolean[bytes.length * 8];
         int j = 0;
-        for (int i = 0; i < bytes.length; i++) {
-            String binaryString = String.format("%8s", Integer.toBinaryString(bytes[i] & 0xFF)).replace(' ', '0');
-
+        for (byte b : bytes) {
+            String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'); // convertion en chaine de character de 0 et de 1
             for (char c : binaryString.toCharArray()) {
-                output[j] = (c == '1');
+                output[j] = (c == '1'); // remplir le tableau de booleen
                 j++;
             }
         }
@@ -35,8 +34,9 @@ class Des {
     }
 
     private Bloc[] decoupage(boolean[] binArray) {
-        int quantity = (binArray.length + this.size - 1) / this.size; // binArray.length / size et arrondir au dessus
+        int quantity = (binArray.length + this.size - 1) / this.size; // -> binArray.length / size et arrondir au dessus
         Bloc[] blocs = new Bloc[quantity];
+        // Découpage du tableau booleen en un tableau de Bloc
         for (int i = 0; i < binArray.length; i += this.size) {
             blocs[i/this.size] = new Bloc(Arrays.copyOfRange(binArray, i, i + this.size));
         }
@@ -45,14 +45,18 @@ class Des {
 
     private Bloc generateKey() {
         Bloc masterKey = Bloc.random(this.size); // masterKey
-        Bloc key = masterKey.subBlock(0, this.size - 8);
+        Bloc key = masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit 
+        // TODO: key permutation pour avoir la clé de 56 bits
 
-        Bloc[] keys = key.split();      
+        Bloc[] keys = key.split();      // Decoupage en deux clé de 28 bits
+        // Décalage circulaire de 1 bit vers la gauche
         keys[0].shift();
         keys[1].shift();
-        key = Bloc.combine(keys);
-        
-        return null;
+        key = Bloc.combine(keys); // Recoller les deux blocs
+        // TODO: permutation 
+
+        // TODO: clé de 48 bit
+        return key;
     }
     private int processK(Bloc G, Bloc D, int n) {
         Bloc masterKey = generateKey() ;

@@ -24,7 +24,7 @@ class Bloc {
         return this.array;
     } 
     public void shift() {
-        // Decalage de 1 bit vers la gauche
+        // Decalage circulaire de 1 bit vers la gauche
         boolean b = this.array[0];
         for (int i = 0; i < this.array.length - 2; i++) {
             this.array[i] = this.array[i+1];
