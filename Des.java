@@ -2,7 +2,7 @@ import java.util.Arrays;
 
 class Des {
     public int[] permute; 
-    public int tailleBloc = 64;
+    public Bloc masterKey;
 
     public int[] permInit = {
         58, 50, 42, 34, 26, 18, 10, 2,
@@ -15,6 +15,13 @@ class Des {
         61, 53, 45, 37, 29, 21, 13, 5,
         63, 55, 47, 39, 31, 23, 15, 7
     }; 
+
+    public int[] compPerm = {
+        14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10,
+        23, 19, 12, 4, 26, 8, 16, 7, 27, 20, 13, 2,
+        41, 52, 31, 37, 47, 55, 30, 40, 51, 45, 33, 48,
+        44, 49, 39, 56, 34, 53, 46, 42, 50, 36, 29, 32 
+    };
     private int size = 64;
 
     private Bloc[] blocs;
@@ -44,23 +51,23 @@ class Des {
     }    
 
     private Bloc generateKey() {
-        Bloc masterKey = Bloc.random(this.size); // masterKey
-        Bloc key = masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit 
-        // TODO: key permutation pour avoir la clé de 56 bits
+        this.masterKey = Bloc.random(this.size); // masterKey
+        Bloc key = this.masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit 
+        // TODO: key permutation pour avoir une clé de 56 bits
 
         Bloc[] keys = key.split();      // Decoupage en deux clé de 28 bits
         // Décalage circulaire de 1 bit vers la gauche
         keys[0].shift();
         keys[1].shift();
         key = Bloc.combine(keys); // Recoller les deux blocs
-        // TODO: permutation 
-
-        // TODO: clé de 48 bit
+        // Compression Permutation 
+        key.permut(this.compPerm); // Reduction en une clé de 48 bit
+        
         return key;
     }
 
     private int processK(Bloc G, Bloc D, int n) {
-        Bloc masterKey = generateKey() ;
+        Bloc key = generateKey() ;
         
         return 0;
     }
