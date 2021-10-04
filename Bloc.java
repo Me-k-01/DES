@@ -4,17 +4,16 @@ class Bloc {
     public int size;
     private boolean[] array;
 
-    public static random(int size) {
-        boolean[] masterKey = new boolean[this.size];
-        for (int i = 0; i < this.size; i++) {
-            masterKey[i] = Math.random() * 2 < 1
-            //masterKey[i] = (int)(Math.random() * 2);
+    public static Bloc random(int size) {
+        boolean[] randomArr = new boolean[size];
+        for (int i = 0; i < size; i++) {
+            randomArr[i] = Math.random() * 2 < 1;
         }
-        return 
+        return new Bloc(randomArr);
     }
     public Bloc(int size) {
         this.size = size;
-        this.array = new int[size];
+        this.array = new boolean[size];
     }
     public Bloc(boolean[] array) {
         this.size = array.length;
@@ -55,17 +54,17 @@ class Bloc {
             else 
                 str += "0"; 
             if (i < this.size - 1) 
-                str += ", "
+                str += ", ";
         }
         return str+"]";
     }
     public Bloc subBlock(int i, int j) {
-        boolean arr = new boolean[this.size - (i-j)];
+        boolean[] arr = new boolean[this.size - (i-j)];
         
         for (int index = i; index < j; index++) {
             arr[index-i] = this.array[index];
         }
-        return Bloc bloc(arr);
+        return new Bloc(arr);
     }
     public Bloc[] split() {
         int i = this.size/2;
