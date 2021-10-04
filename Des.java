@@ -50,16 +50,6 @@ class Des {
         return output;
     }
 
-    private Bloc[] decoupage(boolean[] binArray) {
-        int quantity = (binArray.length + this.size - 1) / this.size; // -> binArray.length / size et arrondir au dessus
-        Bloc[] blocs = new Bloc[quantity];
-        // Découpage du tableau booleen en un tableau de Bloc
-        for (int i = 0; i < binArray.length; i += this.size) {
-            blocs[i/this.size] = new Bloc(Arrays.copyOfRange(binArray, i, i + this.size));
-        }
-        return blocs;
-    }    
-
     private Bloc generateKey() {
         this.masterKey = Bloc.random(this.size); // masterKey
         Bloc key = this.masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit 
@@ -79,13 +69,16 @@ class Des {
     private int processK(Bloc G, Bloc D, int n) {
         Bloc key = generateKey() ;
         D.permut(this.expPerm); // Expansion permutation 32 -> 48
-
+        D.xor(key);
+        Bloc[] Ds = D.slice(6); // Decoupage en 8 bloc de 6 bits
+        // TODO substitution
+        
         return 0;
     }
     
     public int[] crypte(String msg) {
-        this.blocs = decoupage(stringToBinaryArray(msg));
 
+        this.blocs = new Bloc(stringToBinaryArray(msg)).slice(this.size);
         for (int i = 0; i < this.blocs.length; i++) {
             Bloc b = this.blocs[i];
             // Permutation initial

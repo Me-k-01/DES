@@ -11,6 +11,15 @@ class Bloc {
         }
         return new Bloc(randomArr);
     }
+    public Bloc[] slice(int size) {
+        int quantity = (this.size + size - 1) / size; // taille du tableau binaire / size et arrondir au dessus);
+        Bloc[] blocs = new Bloc[quantity];
+        // Découpage du tableau booleen en un tableau de Bloc
+        for (int i = 0; i < this.size; i += size) {
+            blocs[i/size] = new Bloc(Arrays.copyOfRange(this.array, i, i + size));
+        }
+        return blocs; 
+    }
     public Bloc(int size) {
         this.size = size;
         this.array = new boolean[size];
@@ -46,6 +55,14 @@ class Bloc {
         }
         this.array = arr;
     }
+    public void xor(Bloc b) {
+        for (int i = 0; i < this.array.length; i++) {
+            this.array[i] ^= b.get(i);
+        }
+    }
+    public boolean get(int i) {
+        return this.array[i];
+    }
     @Override
     public String toString() {
         String str = "[";
@@ -68,11 +85,7 @@ class Bloc {
         return new Bloc(arr);
     }
     public Bloc[] split() {
-        int i = this.size/2;
-        return new Bloc[]{
-            new Bloc(Arrays.copyOfRange(this.array, 0, i)), 
-            new Bloc(Arrays.copyOfRange(this.array, i, this.size))
-        }; 
+        return this.slice(this.size/2);
     }
     static Bloc combine(Bloc blocA, Bloc blocB) {
         boolean[] arr = new boolean[blocA.size + blocB.size];
