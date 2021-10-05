@@ -55,10 +55,12 @@ class Bloc {
         }
         this.array = arr;
     }
-    public void xor(Bloc b) {
+    public Bloc xor(Bloc b) {
+        boolean[] arr = new boolean[this.size];
         for (int i = 0; i < this.array.length; i++) {
-            this.array[i] ^= b.get(i);
+            arr[i] = this.array[i] ^ b.get(i);
         }
+        return new Bloc(arr);
     }
     public boolean get(int i) {
         return this.array[i];
