@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class Des {
     public int[] permute; 
@@ -58,10 +60,26 @@ class Des {
         return output;
     }
 
+    public int[] generatePermArray(int size) {
+        int[] arr = new int[size];
+        List<Integer> indicesPoss = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) indicesPoss.add(i+1);
+        
+
+        for (int i = 0; i < size; i++) {
+            int index = (int)(Math.random() * indicesPoss.size());
+            int n = indicesPoss.remove(index);
+            arr[i] = n;
+        }
+        return arr;
+    }
+
     private Bloc generateKey() {
         this.masterKey = Bloc.random(this.size); // masterKey
+        // Permutation et suppression des 8 derniers bits
         Bloc key = this.masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit 
-        // TODO: key permutation pour avoir une clé de 56 bits
+        key.permut(generatePermArray(this.size - 8));// Permutation random de la clé
+   
 
         Bloc[] keys = key.split();      // Decoupage en deux clé de 28 bits
         // Décalage circulaire de 1 bit vers la gauche
