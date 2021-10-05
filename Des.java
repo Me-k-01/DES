@@ -124,9 +124,14 @@ class Des {
         return new Bloc(intToBinaryArray(S1[i][j], 4));
     } 
     public Bloc fonction_F(Bloc K, Bloc D) {
-
-        /*
         D.permut(this.expPerm); // Expansion permutation 32 -> 48
+        
+        Bloc[] Ds = D.xor(K).slice(6); // Decoupage en 8 bloc de 6 bits
+        for (int i = 0; i < Ds.length; i++) {
+            Ds[i] = substitution(Ds[i]); // Substitution S1
+        }
+        
+        /*
         Bloc[] Ds = D.slice(6); // Decoupage en 8 bloc de 6 bits
         for (int i = 0; i < Ds.length; i++) {
             Ds[i] = substitution(Ds[i]); // Substitution S1
