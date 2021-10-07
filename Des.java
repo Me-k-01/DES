@@ -80,18 +80,21 @@ class Des {
     }
 
     private Bloc generateKey() {
-        this.masterKey = Bloc.random(this.size); // masterKey de 64 bits
-        // Permutation et suppression des 8 derniers bits
-        Bloc key = this.masterKey.subBlock(0, this.size - 8); // suppresion des 8 dernier bit (58bits) 
-        key.permut(generatePermArray(this.size - 8));// Permutation random de la clé de 58bits
-   
+        // calcul une clé de 48 bits 
 
-        Bloc[] keys = key.split();      // Decoupage en deux clé de 28 bits
+        this.masterKey = Bloc.random(this.size); // masterKey de 64 bits
+        // Suppression des 8 derniers bits
+        Bloc key = this.masterKey.subBlock(0, this.size - 8); // 58 bits 
+        // Permutation random de la clé de 58 bits
+        key.permut(generatePermArray(this.size - 8));
+        // Découpage en deux clé
+        Bloc[] keys = key.split();      // 28 bits
         // Décalage circulaire de 1 bit vers la gauche
         keys[0].shift();
         keys[1].shift();
-        key = Bloc.combine(keys); // Recoller les deux blocs (58bits)
-        // Compression Permutation 
+        // Recoller les deux blocs 
+        key = Bloc.combine(keys); // 58bits
+        // Compression et permutation 
         key.permut(this.compPerm); // Reduction en une clé de 48 bit
         
         return key;
@@ -123,6 +126,7 @@ class Des {
 
         return new Bloc(intToBinaryArray(S1[i][j], 4));
     } 
+    
     public Bloc fonction_F(Bloc K, Bloc D) {
         D.permut(this.expPerm); // Expansion permutation 32 -> 48
         
@@ -143,11 +147,16 @@ class Des {
     }
 
     private Bloc processK(Bloc G, Bloc D, int n) {
-        Bloc key = generateKey() ;
+        // Faire 16 fois:
+
+        // Determination d'une clé Kn
+        Bloc key = generateKey() ; 
         // Dn+1 = Gn XOR F(Kn ,Dn )
         Bloc Dn = G.xor(fonction_F(key, D));
         // Gn+1 = Dn
         Bloc Gn = D;
+
+
         // Deux parties sont recollées
         return Bloc.combine(Gn, Dn);
     }
@@ -157,14 +166,14 @@ class Des {
         this.blocs = new Bloc(stringToBinaryArray(msg)).slice(this.size);
         for (int i = 0; i < this.blocs.length; i++) {
             Bloc b = this.blocs[i];
-            // Permutation initial
+            // 2.1 Permutation initial
             b.permut(this.permInit);
-            // Découpage en deux parties
+            // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
             
-            // Determination de clé
+            // 2.3 et 2.4 recollé
             b = processK(splitedBloc[0], splitedBloc[1], 16);
-            // Permutation inverse
+            // 2.5 Permutation inverse
             this.blocs[i].invPermut(this.permInit);
         }
         //System.out.println(Arrays.deepToString(this.blocs));
