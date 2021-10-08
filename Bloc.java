@@ -96,11 +96,12 @@ class Bloc {
         return new Bloc(arr);
     }
     static Bloc combine(Bloc[] blocs) {
-        Bloc blocA = blocs[0];
-        Bloc blocB = blocs[1]; 
-        boolean[] arr = new boolean[blocA.size + blocB.size];
-        System.arraycopy(blocA.toArray(), 0, arr, 0, blocA.size);
-        System.arraycopy(blocB.toArray(), 0, arr, blocA.size, blocB.size);
+        int size = blocs.length * blocs[0].size;
+        boolean[] arr = new boolean[size]; 
+        for (int i = 0; i < blocs.length; i++) {
+            boolean[] array = blocs[i].toArray();
+            System.arraycopy(array, 0, arr, i*array.length, array.length);
+        } 
         return new Bloc(arr);
     }
 }

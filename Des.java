@@ -119,31 +119,28 @@ class Des {
         return b;
     }
 
-
     private Bloc substitution(Bloc b) {
-        int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)});
-        int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)}); 
+        // Fonction de substitution qui permet de passer de 6 à 4 bits 
+        int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)}); // les bits 1 et 6 code i
+        int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)});  // les bits 2 à 5 encodes j
 
-        return new Bloc(intToBinaryArray(S1[i][j], 4));
+        return new Bloc(intToBinaryArray(S1[i][j], 4)); // Bloc de 4 bit
     } 
-    
+
     public Bloc fonction_F(Bloc K, Bloc D) {
-        D.permut(this.expPerm); // Expansion permutation 32 -> 48
+
+        // Expansion permutation
+        D.permut(this.expPerm); // 32 bits vers 48 bits
+
+        // Dn* = E XOR Kn   et    Découpage en 8 blocs de 6 bits
+        Bloc[] Ds = D.xor(K).slice(6); // Bloc[8] de 6 bits
         
-        Bloc[] Ds = D.xor(K).slice(6); // Decoupage en 8 bloc de 6 bits
+        // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
-            Ds[i] = substitution(Ds[i]); // Substitution S1
+            Ds[i] = substitution(Ds[i]); // Bloc[8] de 4 bits
         }
-        
-        /*
-        Bloc[] Ds = D.slice(6); // Decoupage en 8 bloc de 6 bits
-        for (int i = 0; i < Ds.length; i++) {
-            Ds[i] = substitution(Ds[i]); // Substitution S1
-        }
-        System.out.println(Arrays.toString(Ds));
-        Bloc FKD = Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
-        */
-        return null;
+        Bloc bloc = Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
+        return bloc;
     }
 
     private Bloc processK(Bloc G, Bloc D, int n) {
@@ -171,14 +168,15 @@ class Des {
             // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
             
-            // 2.3 et 2.4 recollé
+            // 2.3 et 2.4 recoller
             b = processK(splitedBloc[0], splitedBloc[1], 16);
             // 2.5 Permutation inverse
             this.blocs[i].invPermut(this.permInit);
         }
-        //System.out.println(Arrays.deepToString(this.blocs));
-        
-        return null;
+
+        System.out.println(Arrays.toString(this.blocs));
+
+        return null;    
     }
 
     public String decrypte(int[] decrypte) {return null;
