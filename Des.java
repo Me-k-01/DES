@@ -49,23 +49,7 @@ class Des {
 
     private int size = 64;
 
-    private Bloc[] blocs;
-
-
-    public static boolean[] stringToBinaryArray(String msg) {
-        byte[] bytes = msg.getBytes();
-        boolean[] output = new boolean[bytes.length * 8];
-        int j = 0;
-        for (byte b : bytes) {
-            String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'); // convertion en chaine de character de 0 et de 1
-            for (char c : binaryString.toCharArray()) {
-                output[j] = (c == '1'); // remplir le tableau de booleen
-                j++;
-            }
-        }
-        return output;
-    }
-
+    /////////// Fonction de generation aléatoire  ///////////
     public int[] generatePermArray(int size) {
         int[] arr = new int[size];
         List<Integer> indicesPoss = new ArrayList<Integer>();
@@ -78,7 +62,6 @@ class Des {
         }
         return arr;
     }
-
     private Bloc generateKey() {
         // calcul une clé de 48 bits 
 
@@ -99,7 +82,21 @@ class Des {
         
         return key;
     }
-
+    
+    /////////// Fonction de convertion ///////////
+    public static boolean[] stringToBinaryArray(String msg) {
+        byte[] bytes = msg.getBytes();
+        boolean[] output = new boolean[bytes.length * 8];
+        int j = 0;
+        for (byte b : bytes) {
+            String binaryString = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'); // convertion en chaine de character de 0 et de 1
+            for (char c : binaryString.toCharArray()) {
+                output[j] = (c == '1'); // remplir le tableau de booleen
+                j++;
+            }
+        }
+        return output;
+    }
     private int binaryArrayToInt(boolean[] bools) {
         int n = 0;
         for (int i = 0; i < bools.length; i++) {
@@ -118,6 +115,7 @@ class Des {
         }
         return b;
     }
+    ////////////////////////////////////////////////
 
     private Bloc substitution(Bloc b) {
         // Fonction de substitution qui permet de passer de 6 à 4 bits 
@@ -139,8 +137,7 @@ class Des {
         for (int i = 0; i < Ds.length; i++) {
             Ds[i] = substitution(Ds[i]); // Bloc[8] de 4 bits
         }
-        Bloc bloc = Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
-        return bloc;
+        return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
 
     private Bloc processK(Bloc G, Bloc D, int n) {
@@ -153,16 +150,17 @@ class Des {
         // Gn+1 = Dn
         Bloc Gn = D;
 
-
         // Deux parties sont recollées
         return Bloc.combine(Gn, Dn);
     }
-    
-    public int[] crypte(String msg) {
 
-        this.blocs = new Bloc(stringToBinaryArray(msg)).slice(this.size);
-        for (int i = 0; i < this.blocs.length; i++) {
-            Bloc b = this.blocs[i];
+    
+    public boolean[] crypte(String msg) {
+        // Crypte un message en un tableau de booléens
+        Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(this.size);
+
+        for (int i = 0; i < blocs.length; i++) {
+            Bloc b = blocs[i];
             // 2.1 Permutation initial
             b.permut(this.permInit);
             // 2.2 Découpage en deux parties
@@ -171,20 +169,23 @@ class Des {
             // 2.3 et 2.4 recoller
             b = processK(splitedBloc[0], splitedBloc[1], 16);
             // 2.5 Permutation inverse
-            this.blocs[i].invPermut(this.permInit);
+            blocs[i].invPermut(this.permInit);
         }
-
-        System.out.println(Arrays.toString(this.blocs));
-
-        return null;    
+        Bloc bloc = Bloc.combine(blocs);
+        System.out.println(bloc.toString());
+        return bloc.toArray();    
     }
 
-    public String decrypte(int[] decrypte) {return null;
+    public String decrypte(boolean[] decrypte) {
+        Bloc[] blocs = new Bloc(decrypte).slice(this.size);
+        for (int i = 0; i < blocs.length; i++) {
+        }    
+        return "";
     }
 
     public static void main(String[] args) {
         Des d = new Des();
-        int[] messCrypt = d.crypte("Bonjour a tous");
-        //System.out.println(d.decrypte(messCrypt));
+        boolean[] messCrypt = d.crypte("Bonjour a tous");
+        System.out.println(d.decrypte(messCrypt));
     }
 }
