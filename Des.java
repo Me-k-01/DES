@@ -40,14 +40,20 @@ class Des {
         28, 29, 28, 29, 30, 31, 32,  1 
     };
 
-    private int[][] S1 = {
-        {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
-        {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
-        {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
-        {3, 15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}
-    };
+    private int[][] S1;
+
+    private Bloc key; 
 
     private int size = 64;
+
+    public Des() {
+        S1 = new int[][]{
+            {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
+            {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
+            {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
+            {3, 15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}
+        };
+    }
 
     /////////// Fonction de generation aléatoire  ///////////
     public int[] generatePermArray(int size) {
@@ -97,6 +103,19 @@ class Des {
         }
         return output;
     }
+    private static String binaryArrayToString(boolean[] bools) {
+        String msg = "";
+        Bloc[] blocs = new Bloc(bools).slice(8);
+        for (Bloc bloc : blocs) {
+            byte b = 0;
+            for (boolean bool : bloc.toArray()) {
+                b <<= 1;
+                if (bool) b |= 1;
+            }
+            msg += (char)b;
+        }
+        return msg;
+    }
     private int binaryArrayToInt(boolean[] bools) {
         int n = 0;
         for (int i = 0; i < bools.length; i++) {
@@ -117,41 +136,41 @@ class Des {
     }
     ////////////////////////////////////////////////
 
-    private Bloc substitution(Bloc b) {
+    private Bloc substitution(Bloc b, int[][] Sn) {
         // Fonction de substitution qui permet de passer de 6 à 4 bits 
         int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)}); // les bits 1 et 6 code i
         int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)});  // les bits 2 à 5 encodes j
 
-        return new Bloc(intToBinaryArray(S1[i][j], 4)); // Bloc de 4 bit
+        return new Bloc(intToBinaryArray(Sn[i][j], 4)); // Bloc de 4 bit
     } 
 
     public Bloc fonction_F(Bloc K, Bloc D) {
 
         // Expansion permutation
-        D.permut(this.expPerm); // 32 bits vers 48 bits
+        D = D.permut(this.expPerm); // 32 bits vers 48 bits
 
         // Dn* = E XOR Kn   et    Découpage en 8 blocs de 6 bits
         Bloc[] Ds = D.xor(K).slice(6); // Bloc[8] de 6 bits
         
         // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
-            Ds[i] = substitution(Ds[i]); // Bloc[8] de 4 bits
+            Ds[i] = substitution(Ds[i], this.S1); // Bloc[8] de 4 bits
         }
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
 
-    private Bloc processK(Bloc G, Bloc D, int n) {
+    private Bloc processK(Bloc G, Bloc D, int n) { // G et D sur 32bits
         // Faire 16 fois:
-
+        
         // Determination d'une clé Kn
-        Bloc key = generateKey() ; 
+        this.key = generateKey() ;  // 48b
         // Dn+1 = Gn XOR F(Kn ,Dn )
-        Bloc Dn = G.xor(fonction_F(key, D));
+        Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
         // Gn+1 = Dn
-        Bloc Gn = D;
+        Bloc Gn = D;  
 
         // Deux parties sont recollées
-        return Bloc.combine(Gn, Dn);
+        return Bloc.combine(Gn, Dn); // 64 bits
     }
 
     
@@ -162,25 +181,40 @@ class Des {
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
             // 2.1 Permutation initial
-            b.permut(this.permInit);
+            b = b.permut(this.permInit);
             // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
             
             // 2.3 et 2.4 recoller
             b = processK(splitedBloc[0], splitedBloc[1], 16);
             // 2.5 Permutation inverse
-            blocs[i].invPermut(this.permInit);
+            blocs[i] = b.invPermut(this.permInit);
         }
         Bloc bloc = Bloc.combine(blocs);
         System.out.println(bloc.toString());
         return bloc.toArray();    
     }
 
+    public Bloc invProcessK(Bloc G, Bloc D, int n) {
+        // Dn = Gn+1
+        Bloc Dn = G;
+        // Gn = Dn+1 xor F(Kn, Dn)
+        Bloc Gn = D.xor(fonction_F(this.key, Dn));
+        
+        return Bloc.combine(Gn, Dn);
+    }
+
     public String decrypte(boolean[] decrypte) {
         Bloc[] blocs = new Bloc(decrypte).slice(this.size);
         for (int i = 0; i < blocs.length; i++) {
+            Bloc b = blocs[i];
+            b = b.permut(this.permInit);
+            Bloc[] splitedBloc = b.split();
+            b = processK(splitedBloc[0], splitedBloc[1], 16);
+            
+            blocs[i] = b.invPermut(this.permInit);
         }    
-        return "";
+        return binaryArrayToString(Bloc.combine(blocs).toArray());
     }
 
     public static void main(String[] args) {

@@ -69,21 +69,19 @@ class Bloc {
         } 
         this.array[this.array.length - 1] = b;
     } 
-    public void permut(int[] permTab) {
+    public Bloc permut(int[] permTab) {
         boolean[] permArr = new boolean[permTab.length];
         for (int i = 0; i < permTab.length; i++) {
             permArr[i] = this.array[permTab[i]-1]; 
         }
-        this.array = permArr;
-        this.size = permTab.length;
+        return new Bloc(permArr);
     }
-    public void invPermut(int[] permTab) {
-
+    public Bloc invPermut(int[] permTab) {
         boolean[] arr = new boolean[this.size];
-        for (int i = 0; i < this.size; i++) {
+        for (int i = 0; i < permTab.length; i++) {
             arr[permTab[i]-1] = this.array[i]; 
         }
-        this.array = arr;
+        return new Bloc(arr);
     }
     public Bloc xor(Bloc b) {
         boolean[] arr = new boolean[this.size];
