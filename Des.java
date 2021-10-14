@@ -119,9 +119,9 @@ class Des {
     static public int binaryArrayToInt(boolean[] bools) {
         int n = 0;
         for (int i = 0; i < bools.length; i++) {
-            // decalage de bits vers la gauche pour calculer les puissances de deux
+            // Décalage de i bits vers la gauche pour calculer les puissances de deux
             if (bools[i])
-                n += 1 << i; // = 2 ^ i
+                n += 1 << (bools.length -1 - i); // équivalent à: 2 ^ (bools.length - i)
         }
         return n;
     }
@@ -220,8 +220,6 @@ class Des {
     }
 
     static public void main(String[] args) {
-        System.out.println(Arrays.toString(Des.intToBinaryArray(1, 6)));
-        System.out.println(Des.binaryArrayToInt(Des.intToBinaryArray(1, 6)));
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
 

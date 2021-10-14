@@ -12,10 +12,12 @@ public class DesTest {
     }      
     @Test
     public void testBinaryToInt() {
-        
         assertArrayEquals(new boolean[]{false, false, true, false}, Des.intToBinaryArray(2, 4));
-        for (int n = 0; n < 64; n++) {
-            assertEquals(n, Des.binaryArrayToInt(Des.intToBinaryArray(n, 7)));
+        
+        for (int i = 1; i < 8; i++) {
+            for (int n = 0; n < 1 << i; n++) {
+                assertEquals(n, Des.binaryArrayToInt(Des.intToBinaryArray(n, i)));
+            }
         }
     }      
 
