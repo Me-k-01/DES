@@ -109,7 +109,7 @@ class Bloc {
             else 
                 str += "0"; 
             if (i < this.size - 1) 
-                str += ", ";
+                str += ",";
         }
         return str+"]";
     }

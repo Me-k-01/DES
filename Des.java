@@ -137,7 +137,7 @@ class Des {
     }
     ////////////////////////////////////////////////
 
-    public Bloc substitution(Bloc b, int[][] Sn) {
+    static public Bloc substitution(Bloc b, int[][] Sn) {
         // Fonction de substitution qui permet de passer de 6 à 4 bits 
         int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)}); // les bits 1 et 6 code i
         int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)});  // les bits 2 à 5 encodes j
@@ -219,9 +219,9 @@ class Des {
     }
 
     static public void main(String[] args) {
+        /*
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
-
-        System.out.println(d.decrypte(messCrypt));
+        System.out.println(d.decrypte(messCrypt));*/
     }
 }
