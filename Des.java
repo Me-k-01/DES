@@ -127,10 +127,12 @@ class Des {
     }
     static public boolean[] intToBinaryArray(int n, int size) {
         boolean[] b = new boolean[size];
-        int i = size-1;  // on remplie a l'envers
-        for (char c : Integer.toBinaryString(n).toCharArray()) {
+        String str = Integer.toBinaryString(n);
+        int i = size - str.length();  // On remplit a partir du permier 1
+
+        for (char c : str.toCharArray()) {
             b[i] = c == '1';
-            i--;
+            i++;
         }
         return b;
     }
@@ -218,7 +220,8 @@ class Des {
     }
 
     static public void main(String[] args) {
-        System.out.println(Arrays.toString(Des.intToBinaryArray(2, 4)));
+        System.out.println(Arrays.toString(Des.intToBinaryArray(1, 6)));
+        System.out.println(Des.binaryArrayToInt(Des.intToBinaryArray(1, 6)));
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
 
