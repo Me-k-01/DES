@@ -8,15 +8,19 @@ public class DesTest {
     @Test
     public void testBinaryToString() {
         String str = "Petit test";
-        assertEquals(str, Des.binaryArrayToString(Des.stringToBinaryArray(str)));
+        boolean[] boolArr = Des.stringToBinaryArray(str);
+        assertTrue(boolArr.length == str.length() * 8); // Chaque char est encodé sur 8 bit
+        assertEquals(str, Des.binaryArrayToString(boolArr));
     }      
     @Test
     public void testBinaryToInt() {
         assertArrayEquals(new boolean[]{false, false, true, false}, Des.intToBinaryArray(2, 4));
-        
+
         for (int i = 1; i < 8; i++) {
             for (int n = 0; n < 1 << i; n++) {
-                assertEquals(n, Des.binaryArrayToInt(Des.intToBinaryArray(n, i)));
+                boolean[] boolArr = Des.intToBinaryArray(n, i);
+                assertTrue(boolArr.length == i);
+                assertEquals(n, Des.binaryArrayToInt(boolArr));
             }
         }
     }      
@@ -26,6 +30,7 @@ public class DesTest {
         for (int size = 0; size < 64; size++) {
 
             int[] arr = Des.generatePermArray(size);
+            assertTrue(arr.length == size);
             int max = 0;
             // Duplicate test et Max test
             for(int i = 0; i < arr.length; i++) {  

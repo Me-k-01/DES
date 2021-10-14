@@ -79,8 +79,7 @@ class Des {
         // Découpage en deux clé
         Bloc[] keys = key.split();      // 28 bits
         // Décalage circulaire de 1 bit vers la gauche
-        keys[0].shift();
-        keys[1].shift();
+        keys[0].shift(); keys[1].shift();
         // Recoller les deux blocs 
         key = Bloc.combine(keys); // 58bits
         // Compression et permutation 
