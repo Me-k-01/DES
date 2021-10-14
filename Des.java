@@ -168,6 +168,7 @@ class Des {
         Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
         // Gn+1 = Dn
         Bloc Gn = D;  
+        // TODO: Permut
 
         // Deux parties sont recollées
         return Bloc.combine(Gn, Dn); // 64 bits
@@ -200,7 +201,7 @@ class Des {
         Bloc Dn = G;
         // Gn = Dn+1 xor F(Kn, Dn)
         Bloc Gn = D.xor(fonction_F(this.key, Dn));
-        
+        // TODO: Permut
         return Bloc.combine(Gn, Dn);
     }
 
@@ -220,6 +221,8 @@ class Des {
     public static void main(String[] args) {
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
+
+        System.out.println(binaryArrayToString(stringToBinaryArray("Petit test")));
         System.out.println(d.decrypte(messCrypt));
     }
 }
