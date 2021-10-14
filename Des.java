@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,15 +57,14 @@ class Des {
     }
 
     /////////// Fonction de generation aléatoire  ///////////
-    public int[] generatePermArray(int size) {
+    static public int[] generatePermArray(int size) {
         int[] arr = new int[size];
         List<Integer> indicesPoss = new ArrayList<Integer>();
-        for (int i = 0; i < size; i++) indicesPoss.add(i+1);
+        for (int i = 1; i < size+1; i++) indicesPoss.add(i);
         
         for (int i = 0; i < size; i++) {
             int index = (int)(Math.random() * indicesPoss.size());
-            int n = indicesPoss.remove(index);
-            arr[i] = n;
+            arr[i] = indicesPoss.remove(index);
         }
         return arr;
     }
@@ -90,7 +90,7 @@ class Des {
     }
     
     /////////// Fonction de convertion ///////////
-    public static boolean[] stringToBinaryArray(String msg) {
+    static public boolean[] stringToBinaryArray(String msg) {
         byte[] bytes = msg.getBytes();
         boolean[] output = new boolean[bytes.length * 8];
         int j = 0;
@@ -103,7 +103,7 @@ class Des {
         }
         return output;
     }
-    private static String binaryArrayToString(boolean[] bools) {
+    static public String binaryArrayToString(boolean[] bools) {
         String msg = "";
         Bloc[] blocs = new Bloc(bools).slice(8);
         for (Bloc bloc : blocs) {
@@ -116,7 +116,7 @@ class Des {
         }
         return msg;
     }
-    private int binaryArrayToInt(boolean[] bools) {
+    static public int binaryArrayToInt(boolean[] bools) {
         int n = 0;
         for (int i = 0; i < bools.length; i++) {
             // decalage de bits vers la gauche pour calculer les puissances de deux
@@ -125,7 +125,7 @@ class Des {
         }
         return n;
     }
-    private boolean[] intToBinaryArray(int n, int size) {
+    static public boolean[] intToBinaryArray(int n, int size) {
         boolean[] b = new boolean[size];
         int i = size-1;  // on remplie a l'envers
         for (char c : Integer.toBinaryString(n).toCharArray()) {
@@ -136,7 +136,7 @@ class Des {
     }
     ////////////////////////////////////////////////
 
-    private Bloc substitution(Bloc b, int[][] Sn) {
+    public Bloc substitution(Bloc b, int[][] Sn) {
         // Fonction de substitution qui permet de passer de 6 à 4 bits 
         int i = binaryArrayToInt(new boolean[]{b.get(0), b.get(5)}); // les bits 1 et 6 code i
         int j = binaryArrayToInt(new boolean[]{b.get(1), b.get(2), b.get(3), b.get(4)});  // les bits 2 à 5 encodes j
@@ -159,7 +159,7 @@ class Des {
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
 
-    private Bloc processK(Bloc G, Bloc D, int n) { // G et D sur 32bits
+    public Bloc processK(Bloc G, Bloc D, int n) { // G et D sur 32bits
         // Faire 16 fois:
         
         // Determination d'une clé Kn
@@ -168,7 +168,6 @@ class Des {
         Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
         // Gn+1 = Dn
         Bloc Gn = D;  
-        // TODO: Permut
 
         // Deux parties sont recollées
         return Bloc.combine(Gn, Dn); // 64 bits
@@ -201,7 +200,7 @@ class Des {
         Bloc Dn = G;
         // Gn = Dn+1 xor F(Kn, Dn)
         Bloc Gn = D.xor(fonction_F(this.key, Dn));
-        // TODO: Permut
+        
         return Bloc.combine(Gn, Dn);
     }
 
@@ -218,11 +217,11 @@ class Des {
         return binaryArrayToString(Bloc.combine(blocs).toArray());
     }
 
-    public static void main(String[] args) {
+    static public void main(String[] args) {
+        System.out.println(Arrays.toString(Des.intToBinaryArray(2, 4)));
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
 
-        System.out.println(binaryArrayToString(stringToBinaryArray("Petit test")));
         System.out.println(d.decrypte(messCrypt));
     }
 }
