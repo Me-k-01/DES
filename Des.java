@@ -219,9 +219,8 @@ class Des {
     }
 
     static public void main(String[] args) {
-        /*
         Des d = new Des();
         boolean[] messCrypt = d.crypte("Bonjour a tous");
-        System.out.println(d.decrypte(messCrypt));*/
+        System.out.println(d.decrypte(messCrypt));
     }
 }
