@@ -1,5 +1,7 @@
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 
 class Bloc {
     public int size;
@@ -36,8 +38,15 @@ class Bloc {
         this.array = new boolean[size];
     }
     public Bloc(boolean[] array) {
-        this.size = array.length;
         this.array = array;
+        this.size = array.length;
+    }
+    public Bloc(List<Boolean> list) {
+        this.array = new boolean[list.size()];
+        for (int i = 0; i < this.array.length; i++) {
+            this.array[i] = list.get(i);
+        }
+        this.size = array.length;
     }
 
     /////////// Decoupage ///////////
@@ -54,12 +63,12 @@ class Bloc {
         return blocs; 
     }
     public Bloc subBlock(int i, int j) {
-        boolean[] arr = new boolean[this.size - (i-j)];
+        /*boolean[] arr = new boolean[this.size - (i-j)];
         
         for (int index = i; index < j; index++) {
             arr[index-i] = this.array[index];
-        }
-        return new Bloc(arr);
+        }*/
+        return new Bloc(Arrays.copyOfRange(this.array, i, j));
     }
     /////////// Operation sur le Bloc ///////////
     public void shift() {
@@ -100,6 +109,13 @@ class Bloc {
     public boolean[] toArray() {
         return this.array;
     } 
+    public List<Boolean> toList() {
+        List<Boolean> boolList = new ArrayList<Boolean>();
+        for (int i = 0; i < this.size; i++) {
+            boolList.add(this.array[i]);
+        }
+        return boolList;
+    } 
     @Override
     public String toString() {
         String str = "[";
@@ -112,6 +128,15 @@ class Bloc {
                 str += ",";
         }
         return str+"]";
+    }
+    public boolean equals(Bloc other) {
+        int i = 0;
+        for (boolean b : other.toArray()) {
+            if (b != this.array[i++]) {
+                return false;
+            }
+        }
+        return true; 
     }
     ////////////////////////////////////////////////
 }

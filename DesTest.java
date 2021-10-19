@@ -9,7 +9,7 @@ public class DesTest {
     public void testBinaryToString() {
         String str = "Petit test";
         boolean[] boolArr = Des.stringToBinaryArray(str);
-        assertTrue(boolArr.length == str.length() * 8); // Chaque char est encodé sur 8 bit
+        assertTrue(boolArr.length == str.length() * 8); // Chaque charactere est encodé sur 8 bit
         assertEquals(str, Des.binaryArrayToString(boolArr));
     }      
     @Test
