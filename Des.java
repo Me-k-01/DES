@@ -199,10 +199,12 @@ class Des {
             // 2.1 Permutation initial
 
             b = b.permut(this.permInit);
+            // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
             Bloc G = splitedBloc[0];
             Bloc D = splitedBloc[1];
             
+            // 2.3 
             // Dn = Gn+1
             Bloc Dn = G;
             // Gn = Dn+1 xor F(Kn, Dn)
