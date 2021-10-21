@@ -149,14 +149,16 @@ class Des {
         
         // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
-            Ds[i] = substitution(Ds[i], this.S1); // Bloc[8] de 4 bits
+            Ds[i] = substitution(Ds[i], this.S1); // 8 Blocs de 4 bits
         }
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
     
     public boolean[] crypte(String msg) {
         // Crypte un message en un tableau de booléens
-        Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(this.size);
+
+        // 1 Le texte est fractionné en bloc de 64 bits
+        Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(64);
 
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
@@ -167,12 +169,12 @@ class Des {
             // G et D sur 32bits
             Bloc G = splitedBloc[0];
             Bloc D = splitedBloc[1];
+
             // 2.3 Faire 16 fois:
-            
             // Determination d'une clé Kn
             this.key = generateKey() ;  // 48 bits
             // Dn+1 = Gn XOR F(Kn ,Dn )
-            Bloc Dn = G.xor(fonction_F(this.key, D)); // 32 bits
+            Bloc Dn = G.xor(fonction_F(this.key, D)); // -> 32 bits
             // Gn+1 = Dn
             Bloc Gn = D;  
 
@@ -188,9 +190,11 @@ class Des {
     }
 
     public String decrypte(boolean[] decrypte) {
-        Bloc[] blocs = new Bloc(decrypte).slice(this.size);
+        Bloc[] blocs = new Bloc(decrypte).slice(64);
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
+            // 2.1 Permutation initial
+
             b = b.permut(this.permInit);
             Bloc[] splitedBloc = b.split();
             Bloc G = splitedBloc[0];
