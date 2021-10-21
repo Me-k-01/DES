@@ -42,7 +42,6 @@ public class BlocTest {
         for (int i = 1; i < 64; i++) {
             boolean[] boolArr = new boolean[i];
             List<Boolean> boolList = new ArrayList<Boolean>();  
-            System.out.println(i);
             for (int j = 0; j < i; j++) {
                 boolean b = Math.random() > 0.5; 
 
