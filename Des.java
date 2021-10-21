@@ -145,7 +145,7 @@ class Des {
         D = D.permut(this.expPerm); // 32 bits vers 48 bits
 
         // Dn* = E XOR Kn   et    Découpage en 8 blocs de 6 bits
-        Bloc[] Ds = D.xor(K).slice(6); // Bloc[8] de 6 bits
+        Bloc[] Ds = D.xor(K).slice(6); // 8 Bloc de 6 bits
         
         // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
@@ -175,11 +175,10 @@ class Des {
             this.key = generateKey() ;  // 48 bits
             // Dn+1 = Gn XOR F(Kn ,Dn )
             Bloc Dn = G.xor(fonction_F(this.key, D)); // -> 32 bits
-            // Gn+1 = Dn
-            Bloc Gn = D;  
+            Bloc Gn = D; // Gn+1 = Dn
 
             // 2.4 Deux parties sont recollées
-            b =  Bloc.combine(Gn, Dn); // 64 bits
+            b = Bloc.combine(Gn, Dn); // 64 bits
             // 2.5 Permutation inverse
             blocs[i] = b.invPermut(this.permInit);
         }
@@ -188,7 +187,11 @@ class Des {
 
         return bloc.toArray();    
     }
-
+    /*
+        decrypte
+        Dn = Gn+1
+        Gn = Dn+1 xor F(Kn, Dn) 
+    */
     public String decrypte(boolean[] decrypte) {
         Bloc[] blocs = new Bloc(decrypte).slice(64);
         for (int i = 0; i < blocs.length; i++) {
@@ -199,11 +202,14 @@ class Des {
             Bloc[] splitedBloc = b.split();
             Bloc G = splitedBloc[0];
             Bloc D = splitedBloc[1];
+            
             // Dn = Gn+1
             Bloc Dn = G;
             // Gn = Dn+1 xor F(Kn, Dn)
             Bloc Gn = D.xor(fonction_F(this.key, Dn));
-            b = Bloc.combine(Gn, Dn);
+            
+            // 2.4 Deux parties sont recollées
+            b = Bloc.combine(Gn, Dn); // 64 bits
             
             blocs[i] = b.invPermut(this.permInit);
         }    
