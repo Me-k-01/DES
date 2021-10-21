@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 class Des {
@@ -145,7 +146,7 @@ class Des {
         D = D.permut(this.expPerm); // 32 bits vers 48 bits
 
         // Dn* = E XOR Kn   et    Découpage en 8 blocs de 6 bits
-        Bloc[] Ds = D.xor(K).slice(6); // 8 Bloc de 6 bits
+        Bloc[] Ds = D.xor(K).slice(6); // 8 Blocs de 6 bits
         
         // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
@@ -201,26 +202,29 @@ class Des {
             b = b.permut(this.permInit);
             // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
-            Bloc G = splitedBloc[0];
-            Bloc D = splitedBloc[1];
+            Bloc Gn = splitedBloc[0];
+            Bloc Dn = splitedBloc[1];
             
             // 2.3 
             // Dn = Gn+1
-            Bloc Dn = G;
+            Bloc D = Gn;
             // Gn = Dn+1 xor F(Kn, Dn)
-            Bloc Gn = D.xor(fonction_F(this.key, Dn));
+            Bloc G = Dn.xor(fonction_F(this.key, D));
             
             // 2.4 Deux parties sont recollées
-            b = Bloc.combine(Gn, Dn); // 64 bits
+            b = Bloc.combine(G, D); // 64 bits
             
             blocs[i] = b.invPermut(this.permInit);
         }    
+        for (Bloc b : blocs) {
+            System.out.println(binaryArrayToString(b.toArray()));
+        }
         return binaryArrayToString(Bloc.combine(blocs).toArray());
     }
 
     static public void main(String[] args) {
         Des d = new Des();
-        boolean[] messCrypt = d.crypte("Bonjour a tous ");
+        boolean[] messCrypt = d.crypte("Bonjour a tous");
         System.out.println(d.decrypte(messCrypt));
     }
 }
