@@ -79,7 +79,8 @@ class Des {
         // Découpage en deux clé
         Bloc[] keys = key.split();      // 28 bits
         // Décalage circulaire de 1 bit vers la gauche
-        keys[0].shift(); keys[1].shift();
+        keys[0] = keys[0].shift(); 
+        keys[1] = keys[1].shift();
         // Recoller les deux blocs 
         key = Bloc.combine(keys); // 58bits
         // Compression et permutation 
@@ -159,21 +160,6 @@ class Des {
         }
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
-
-    public Bloc processK(Bloc G, Bloc D, int n) { // G et D sur 32bits
-        // Faire 16 fois:
-        
-        // Determination d'une clé Kn
-        this.key = generateKey() ;  // 48b
-        // Dn+1 = Gn XOR F(Kn ,Dn )
-        Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
-        // Gn+1 = Dn
-        Bloc Gn = D;  
-
-        // Deux parties sont recollées
-        return Bloc.combine(Gn, Dn); // 64 bits
-    }
-
     
     public boolean[] crypte(String msg) {
         // Crypte un message en un tableau de booléens
@@ -185,9 +171,20 @@ class Des {
             b = b.permut(this.permInit);
             // 2.2 Découpage en deux parties
             Bloc[] splitedBloc = b.split();
+            // G et D sur 32bits
+            Bloc G = splitedBloc[0];
+            Bloc D = splitedBloc[1];
+            // 2.3 Faire 16 fois:
             
-            // 2.3 et 2.4 recoller
-            b = processK(splitedBloc[0], splitedBloc[1], 16);
+            // Determination d'une clé Kn
+            this.key = generateKey() ;  // 48b
+            // Dn+1 = Gn XOR F(Kn ,Dn )
+            Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
+            // Gn+1 = Dn
+            Bloc Gn = D;  
+
+            // 2.4 Deux parties sont recollées
+            b =  Bloc.combine(Gn, Dn); // 64 bits
             // 2.5 Permutation inverse
             blocs[i] = b.invPermut(this.permInit);
         }
@@ -196,22 +193,19 @@ class Des {
         return bloc.toArray();    
     }
 
-    public Bloc invProcessK(Bloc G, Bloc D, int n) {
-        // Dn = Gn+1
-        Bloc Dn = G;
-        // Gn = Dn+1 xor F(Kn, Dn)
-        Bloc Gn = D.xor(fonction_F(this.key, Dn));
-        
-        return Bloc.combine(Gn, Dn);
-    }
-
     public String decrypte(boolean[] decrypte) {
         Bloc[] blocs = new Bloc(decrypte).slice(this.size);
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
             b = b.permut(this.permInit);
             Bloc[] splitedBloc = b.split();
-            b = processK(splitedBloc[0], splitedBloc[1], 16);
+            Bloc G = splitedBloc[0];
+            Bloc D = splitedBloc[1];
+            // Dn = Gn+1
+            Bloc Dn = G;
+            // Gn = Dn+1 xor F(Kn, Dn)
+            Bloc Gn = D.xor(fonction_F(this.key, Dn));
+            b = Bloc.combine(Gn, Dn);
             
             blocs[i] = b.invPermut(this.permInit);
         }    

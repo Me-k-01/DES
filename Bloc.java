@@ -71,13 +71,15 @@ class Bloc {
         return new Bloc(Arrays.copyOfRange(this.array, i, j));
     }
     /////////// Operation sur le Bloc ///////////
-    public void shift() {
+    public Bloc shift() {
         // Decalage circulaire de 1 bit vers la gauche
+        boolean[] array = new boolean[this.array.length];
         boolean b = this.array[0];
-        for (int i = 0; i < this.array.length - 2; i++) {
-            this.array[i] = this.array[i+1];
+        for (int i = 0; i < array.length - 1; i++) {
+            array[i] = this.array[i+1];
         } 
-        this.array[this.array.length - 1] = b;
+        array[array.length - 1] = b;
+        return new Bloc(array);
     } 
     public Bloc permut(int[] permTab) {
         boolean[] permArr = new boolean[permTab.length];

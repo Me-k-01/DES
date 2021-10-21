@@ -114,11 +114,24 @@ public class BlocTest {
                     Bloc A = Bloc.random(size);
                     Bloc B = A.subBlock(i, j);
                     assertEquals(j-i, B.size);
-                    
-                    
+                    for (int k = 0; k < B.size; k++) {
+                        assertEquals(A.get(k+i), B.get(k));
+                    }   
                 }
             }
         }
     }
+    @Test
+    public void testShift() {
+        for (int size = 1; size < 64; size++) {
+            Bloc A = Bloc.random(size);
+            Bloc B = A.shift(); 
+            assertEquals(A.get(0), B.get(size-1));
+            for (int i = 1; i < size; i++) {
+                assertEquals(A.get(i), B.get(i-1));
+            }
+        }    
+
+    } 
     
 }
