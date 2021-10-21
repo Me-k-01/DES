@@ -1,6 +1,5 @@
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,7 +112,8 @@ public class BlocTest {
                     
                     Bloc A = Bloc.random(size);
                     Bloc B = A.subBlock(i, j);
-                    assertEquals(j-i, B.size);
+                    assertEquals(j-i, B.size); // Test de taille
+
                     for (int k = 0; k < B.size; k++) {
                         assertEquals(A.get(k+i), B.get(k));
                     }   
@@ -122,16 +122,51 @@ public class BlocTest {
         }
     }
     @Test
+    public void testPermut() {
+        for (int size = 1; size < 64; size++) {
+            Bloc bloc = Bloc.random(size);
+            int[] permutTab = Des.generatePermArray(size);
+            Bloc permutedBloc = bloc.permut(permutTab);
+            assertEquals(size, permutedBloc.size);
+            for (int i = 0; i < permutedBloc.size; i++) {
+                assertEquals(bloc.get(permutTab[i]-1), permutedBloc.get(i));
+            }
+
+            // Test inverse
+            Bloc invPerm = permutedBloc.permut(permutTab);
+            System.out.println(bloc);
+            System.out.println(permutedBloc);
+            assertTrue(bloc.equals(invPerm));
+        }    
+
+    }
+    @Test
     public void testShift() {
         for (int size = 1; size < 64; size++) {
             Bloc A = Bloc.random(size);
             Bloc B = A.shift(); 
-            assertEquals(A.get(0), B.get(size-1));
+            assertEquals(A.size, B.size); // Test de taille
+            assertEquals(A.get(0), B.get(size-1)); 
             for (int i = 1; i < size; i++) {
                 assertEquals(A.get(i), B.get(i-1));
             }
         }    
 
     } 
-    
+    @Test
+    public void testXor() {
+        for (int size = 1; size < 64; size++) {
+            Bloc A = Bloc.random(size);
+            Bloc B = Bloc.random(size);
+
+            Bloc AxorB = A.xor(B);
+
+            for (int i = 0; i < size; i++) {
+                boolean xor = (A.get(i) || B.get(i)) && !(A.get(i) && B.get(i));
+                assertEquals(xor, AxorB.get(i));
+            }
+            
+        }
+
+    }    
 }

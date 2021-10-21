@@ -63,11 +63,6 @@ class Bloc {
         return blocs; 
     }
     public Bloc subBlock(int i, int j) {
-        /*boolean[] arr = new boolean[this.size - (i-j)];
-        
-        for (int index = i; index < j; index++) {
-            arr[index-i] = this.array[index];
-        }*/
         return new Bloc(Arrays.copyOfRange(this.array, i, j));
     }
     /////////// Operation sur le Bloc ///////////
@@ -133,6 +128,7 @@ class Bloc {
     }
     public boolean equals(Bloc other) {
         int i = 0;
+        if (other.size != this.size) return false;
         for (boolean b : other.toArray()) {
             if (b != this.array[i++]) {
                 return false;

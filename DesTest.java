@@ -32,17 +32,17 @@ public class DesTest {
             int[] arr = Des.generatePermArray(size);
             assertTrue(arr.length == size);
             int max = 0;
+
             // Duplicate test et Max test
             for(int i = 0; i < arr.length; i++) {  
                 for(int j = i + 1; j < arr.length; j++) {  
-                    if(arr[i] == arr[j])  {
-                        fail("Duplicate index pointer"); 
-                    }
+                    assertTrue(arr[i] != arr[j]); // test de redondance
                 }  
                 if (arr[i] > max)
                     max = arr[i];
-                if (arr[i] < 1) 
-                    fail("Index too low");
+                // La valeur des permutation est compris entre 1 et taille inclus.
+                assertTrue(arr[i] > 0); 
+                assertTrue(arr[i] <= size); 
             }  
             if (max > size) 
                 fail("Index out of range");
@@ -67,6 +67,14 @@ public class DesTest {
                 assertArrayEquals(Des.intToBinaryArray(S[i][j], 4), Des.substitution(new Bloc(arr), S).toArray());
 
             }
+        }
+    }
+    @Test
+    public void testGenerateKey() {
+        Des des = new Des();
+        for (int i = 1; i < 128; i++) {
+            Bloc key = des.generateKey();
+            assertEquals(key.size, 48);
         }
     }
     

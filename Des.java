@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 /*
     crypte
@@ -68,14 +67,14 @@ class Des {
         }
         return arr;
     }
-    private Bloc generateKey() {
+    public Bloc generateKey() {
         // calcul une clé de 48 bits 
 
         this.masterKey = Bloc.random(this.size); // masterKey de 64 bits
         // Suppression des 8 derniers bits
         Bloc key = this.masterKey.subBlock(0, this.size - 8); // 58 bits 
         // Permutation random de la clé de 58 bits
-        key.permut(generatePermArray(this.size - 8));
+        key = key.permut(generatePermArray(this.size - 8));
         // Découpage en deux clé
         Bloc[] keys = key.split();      // 28 bits
         // Décalage circulaire de 1 bit vers la gauche
@@ -84,7 +83,7 @@ class Des {
         // Recoller les deux blocs 
         key = Bloc.combine(keys); // 58bits
         // Compression et permutation 
-        key.permut(this.compPerm); // Reduction en une clé de 48 bit
+        key = key.permut(this.compPerm); // Reduction en une clé de 48 bit
         
         return key;
     }
