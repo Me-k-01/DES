@@ -77,14 +77,14 @@ class Bloc {
         return new Bloc(array);
     } 
     public Bloc permut(int[] permTab) {
-        boolean[] permArr = new boolean[permTab.length];
+        boolean[] arr = new boolean[permTab.length];
         for (int i = 0; i < permTab.length; i++) {
-            permArr[i] = this.array[permTab[i]-1]; 
+            arr[i] = this.array[permTab[i]-1]; 
         }
-        return new Bloc(permArr);
+        return new Bloc(arr);
     }
     public Bloc invPermut(int[] permTab) {
-        boolean[] arr = new boolean[this.size];
+        boolean[] arr = new boolean[permTab.length];
         for (int i = 0; i < permTab.length; i++) {
             arr[permTab[i]-1] = this.array[i]; 
         }

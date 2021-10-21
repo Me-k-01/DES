@@ -125,6 +125,7 @@ public class BlocTest {
     public void testPermut() {
         for (int size = 1; size < 64; size++) {
             Bloc bloc = Bloc.random(size);
+
             int[] permutTab = Des.generatePermArray(size);
             Bloc permutedBloc = bloc.permut(permutTab);
             assertEquals(size, permutedBloc.size);
@@ -133,9 +134,7 @@ public class BlocTest {
             }
 
             // Test inverse
-            Bloc invPerm = permutedBloc.permut(permutTab);
-            System.out.println(bloc);
-            System.out.println(permutedBloc);
+            Bloc invPerm = permutedBloc.invPermut(permutTab);
             assertTrue(bloc.equals(invPerm));
         }    
 
