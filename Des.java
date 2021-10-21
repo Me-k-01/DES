@@ -122,7 +122,7 @@ class Des {
     static public boolean[] intToBinaryArray(int n, int size) {
         boolean[] b = new boolean[size];
         String str = Integer.toBinaryString(n);
-        int i = size - str.length();  // On remplit a partir du permier 1
+        int i = size - str.length();  // On remplit à partir du permier 1
 
         for (char c : str.toCharArray()) {
             b[i] = c == '1';
@@ -194,6 +194,7 @@ class Des {
         Gn = Dn+1 xor F(Kn, Dn) 
     */
     public String decrypte(boolean[] decrypte) {
+        // Decrypte un message encrypté en un tableau de booléens
         Bloc[] blocs = new Bloc(decrypte).slice(64);
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
@@ -213,7 +214,7 @@ class Des {
             
             // 2.4 Deux parties sont recollées
             b = Bloc.combine(G, D); // 64 bits
-            
+            // 2.5 Permutation inverse
             blocs[i] = b.invPermut(this.permInit);
         }    
         for (Bloc b : blocs) {
