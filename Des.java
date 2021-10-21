@@ -1,13 +1,7 @@
 
 import java.util.ArrayList;
 import java.util.List;
-/*
-    crypte
 
-    decrypte
-    Dn = Gn+1
-    Gn = Dn+1 xor F(Kn, Dn) 
-*/
 class Des {
     public int[] permute; 
     public Bloc masterKey;
@@ -176,9 +170,9 @@ class Des {
             // 2.3 Faire 16 fois:
             
             // Determination d'une clé Kn
-            this.key = generateKey() ;  // 48b
+            this.key = generateKey() ;  // 48 bits
             // Dn+1 = Gn XOR F(Kn ,Dn )
-            Bloc Dn = G.xor(fonction_F(this.key, D)); // 32b
+            Bloc Dn = G.xor(fonction_F(this.key, D)); // 32 bits
             // Gn+1 = Dn
             Bloc Gn = D;  
 
@@ -189,6 +183,7 @@ class Des {
         }
         Bloc bloc = Bloc.combine(blocs);
         System.out.println(bloc.toString());
+
         return bloc.toArray();    
     }
 
@@ -213,7 +208,7 @@ class Des {
 
     static public void main(String[] args) {
         Des d = new Des();
-        boolean[] messCrypt = d.crypte("Bonjour a tous");
+        boolean[] messCrypt = d.crypte("Bonjour a tous ");
         System.out.println(d.decrypte(messCrypt));
     }
 }

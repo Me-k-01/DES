@@ -1,5 +1,6 @@
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.Assert.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -55,11 +56,7 @@ public class BlocTest {
 
 
     @Test    
-    public void testUnitaryCombine() {
-        /*
-        List<Boolean> list = new ArrayList<Boolean>(A.size + B.size);
-        Collections.addAll(list, A.toArray());
-        Collections.addAll(list, B.toArray());*/
+    public void smallTestCombine() {
         Bloc A = new Bloc(new boolean[]{false, true, false});
         Bloc B = new Bloc(new boolean[]{false, false});
         assertArrayEquals(new boolean[]{false, true, false, false, false}, Bloc.combine(A, B).toArray());;
@@ -87,8 +84,6 @@ public class BlocTest {
             Bloc bloc = Bloc.random(i);
 
             assert(bloc.equals(Bloc.combine(bloc.split())));    
-            /*assertArrayEquals(Stream.concat(A.toList().stream(), B.toList().stream())
-                        .collect(Collectors.toList()), );*/
         }
     } 
     @Test
@@ -123,7 +118,7 @@ public class BlocTest {
     }
     @Test
     public void testPermut() {
-        for (int size = 1; size < 64; size++) {
+        for (int size = 1; size < 128; size++) {
             Bloc bloc = Bloc.random(size);
 
             int[] permutTab = Des.generatePermArray(size);

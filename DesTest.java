@@ -1,6 +1,5 @@
 
 import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.*;
 
@@ -78,4 +77,10 @@ public class DesTest {
         }
     }
     
+    @Test
+    public void testDes() {
+        Des des = new Des();
+        String msg = "Bonjour a tous";
+        //assertEquals(des.decrypte(des.crypte(msg)), msg);
+    }
 }
