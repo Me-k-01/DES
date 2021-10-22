@@ -6,7 +6,7 @@ class Des {
     private int[][] S1;
     private Bloc[][] keys; 
     private int size = 64;
-    private int roundQuant = 2; // Nombre de ronde
+    private int roundQuant = 16; // Nombre de ronde
 
     private int[] permInit = {
         58, 50, 42, 34, 26, 18, 10, 2,
@@ -225,7 +225,7 @@ class Des {
             Bloc Gn = splitedBloc[0]; Bloc Dn = splitedBloc[1]; // G et D sur 32bits
             
             // 2.3 Faire n fois:
-            for (int n = 0; n < this.roundQuant; n++) {
+            for (int n = this.roundQuant-1; n >= 0; n--) {
                 Bloc D = Gn;  // Dn = Gn+1
                 Bloc G = Dn.xor(fonction_F(this.keys[i][n], D)); // Gn = Dn+1 xor F(Kn, Dn)
                 Dn = D;
