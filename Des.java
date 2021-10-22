@@ -161,16 +161,6 @@ class Des {
         }
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
-
-    /* public Bloc round(Bloc G, Bloc D) {
-        for (int n = 0; n < this.roundQuant; n++) {
-            k[n] = generateKey() ;  // Determination d'une clé Kn sur 48 bits
-
-            Bloc Dn = G.xor(fonction_F(k[n], D)); // Dn+1 = Gn XOR F(Kn, Dn)
-            Bloc Gn = D; // Gn+1 = Dn
-        }
-
-    } */
     
     public boolean[] crypte(String msg) {
         // Crypte un message en un tableau de booléens
@@ -186,14 +176,13 @@ class Des {
             b = b.permut(this.permInit);
 
             // 2.2 Découpage en deux parties
-            Bloc[] splitedBloc = b.split();
-            Bloc G = splitedBloc[0]; Bloc D = splitedBloc[1]; // G et D sur 32bits
+            Bloc G = b.left(); Bloc D = b.right(); // G et D sur 32bits
 
             // 2.3 Faire n fois:
             for (int n = 0; n < this.roundQuant; n++) {
-                this.keys[i][n] = generateKey() ;  // Determination d'une clé Kn sur 48 bits
+                k[n] = generateKey() ;  // Determination d'une clé Kn sur 48 bits
 
-                Bloc Dn = G.xor(fonction_F(this.keys[i][n], D)); // Dn+1 = Gn XOR F(Kn, Dn)
+                Bloc Dn = G.xor(fonction_F(k[n], D)); // Dn+1 = Gn XOR F(Kn, Dn)
                 Bloc Gn = D; // Gn+1 = Dn
                 D = Dn;
                 G = Gn;
@@ -221,13 +210,12 @@ class Des {
 
             b = b.permut(this.permInit);
             // 2.2 Découpage en deux parties
-            Bloc[] splitedBloc = b.split();
-            Bloc Gn = splitedBloc[0]; Bloc Dn = splitedBloc[1]; // G et D sur 32bits
+            Bloc Gn = b.left(); Bloc Dn = b.right(); // G et D sur 32bits
             
             // 2.3 Faire n fois:
             for (int n = this.roundQuant-1; n >= 0; n--) {
                 Bloc D = Gn;  // Dn = Gn+1
-                Bloc G = Dn.xor(fonction_F(this.keys[i][n], D)); // Gn = Dn+1 xor F(Kn, Dn)
+                Bloc G = Dn.xor(fonction_F(k[n], D)); // Gn = Dn+1 xor F(Kn, Dn)
                 Dn = D;
                 Gn = G;
             } 

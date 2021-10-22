@@ -50,20 +50,26 @@ class Bloc {
     }
 
     /////////// Decoupage ///////////
-    public Bloc[] split() {
-        return this.slice(this.size/2);
+    public Bloc subBlock(int i, int j) {
+        return new Bloc(Arrays.copyOfRange(this.array, i, j));
     }
     public Bloc[] slice(int size) {
         int quantity = (this.size + size - 1) / size; // taille du tableau binaire / size et arrondir au dessus);
         Bloc[] blocs = new Bloc[quantity];
         // Découpage du tableau booleen en un tableau de Bloc
         for (int i = 0; i < this.size; i += size) {
-            blocs[i/size] = new Bloc(Arrays.copyOfRange(this.array, i, i + size));
+            blocs[i/size] = subBlock(i, i + size);
         }
         return blocs; 
     }
-    public Bloc subBlock(int i, int j) {
-        return new Bloc(Arrays.copyOfRange(this.array, i, j));
+    public Bloc[] split() {
+        return this.slice(this.size/2);
+    }
+    public Bloc left() { // côté gauche G
+        return this.subBlock(0, this.size/2);
+    }
+    public Bloc right() { // côté droit D
+        return this.subBlock(this.size/2, this.size);
     }
     /////////// Operation sur le Bloc ///////////
     public Bloc shift() {
