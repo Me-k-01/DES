@@ -1,6 +1,5 @@
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 class Des {
@@ -37,7 +36,7 @@ class Des {
 
     private int[][] S1;
 
-    private Bloc key; 
+    private Bloc[] keys; 
 
     private int size = 64;
 
@@ -160,6 +159,7 @@ class Des {
 
         // 1 Le texte est fractionné en bloc de 64 bits
         Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(64);
+        this.keys = new Bloc[blocs.length];
 
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
@@ -173,9 +173,9 @@ class Des {
 
             // 2.3 Faire 16 fois:
             // Determination d'une clé Kn
-            this.key = generateKey() ;  // 48 bits
+            this.keys[i] = generateKey() ;  // 48 bits
             // Dn+1 = Gn XOR F(Kn ,Dn )
-            Bloc Dn = G.xor(fonction_F(this.key, D)); // -> 32 bits
+            Bloc Dn = G.xor(fonction_F(this.keys[i], D)); // -> 32 bits
             Bloc Gn = D; // Gn+1 = Dn
 
             // 2.4 Deux parties sont recollées
@@ -210,7 +210,7 @@ class Des {
             // Dn = Gn+1
             Bloc D = Gn;
             // Gn = Dn+1 xor F(Kn, Dn)
-            Bloc G = Dn.xor(fonction_F(this.key, D));
+            Bloc G = Dn.xor(fonction_F(this.keys[i], D));
             
             // 2.4 Deux parties sont recollées
             b = Bloc.combine(G, D); // 64 bits
@@ -220,7 +220,7 @@ class Des {
         for (Bloc b : blocs) {
             System.out.println(binaryArrayToString(b.toArray()));
         }
-        return binaryArrayToString(Bloc.combine(blocs).toArray());
+        return binaryArrayToString(Bloc.combine(blocs).toArray()).trim();
     }
 
     static public void main(String[] args) {

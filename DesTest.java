@@ -81,6 +81,6 @@ public class DesTest {
     public void testDes() {
         Des des = new Des();
         String msg = "Bonjour a tous";
-        //assertEquals(des.decrypte(des.crypte(msg)), msg);
+        assertEquals(des.decrypte(des.crypte(msg)), msg);
     }
 }
