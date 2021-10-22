@@ -5,7 +5,6 @@ import java.util.List;
 class Des {
     private int[][] S1;
     private Bloc[][] keys; 
-    private int size = 64;
     private int roundQuant = 16; // Nombre de ronde
 
     private int[] permInit = {
@@ -39,12 +38,7 @@ class Des {
 
 
     public Des() {
-        S1 = new int[][]{
-            {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
-            {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
-            {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
-            {3, 15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}
-        };
+        S1 = generateSubArray();
         this.roundQuant = 16;
     }
     public Des(int roundQuant) {
@@ -58,7 +52,30 @@ class Des {
     }
 
     /////////// Fonction de generation aléatoire  ///////////
-    static public int[] generatePermArray(int size) {
+    static public int[][] generateSubArray() { // Tableau de subtitution
+        int n = 4;
+        int p = 16;
+        int max = 16;
+        int[][] arr = new int[n][p];
+        List<Integer> indicesPoss = new ArrayList<Integer>();
+
+        for (int i = 0; i < max; i++) {
+            indicesPoss.add(i);
+        }
+        for (int i = 0; i < n*p - max; i++) {
+            indicesPoss.add( (int)(Math.random() * max));
+        }
+
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < p; j++) {
+                int index = (int)(Math.random() * indicesPoss.size());
+                arr[i][j] = indicesPoss.remove(index);
+            }
+        }
+        return arr;
+    }
+    static public int[] generatePermArray(int size) { // Tableau de permutation
         int[] arr = new int[size];
         List<Integer> indicesPoss = new ArrayList<Integer>();
         for (int i = 1; i < size+1; i++) indicesPoss.add(i);
@@ -69,14 +86,15 @@ class Des {
         }
         return arr;
     }
+
     public Bloc generateKey() {
         // calcul une clé de 48 bits 
 
-        Bloc masterKey = Bloc.random(this.size); // masterKey de 64 bits
+        Bloc masterKey = Bloc.random(64); // masterKey de 64 bits
         // Suppression des 8 derniers bits
-        Bloc key = masterKey.subBlock(0, this.size - 8); // 58 bits 
+        Bloc key = masterKey.subBlock(0, 58); // 58 bits 
         // Permutation random de la clé de 58 bits
-        key = key.permut(generatePermArray(this.size - 8));
+        key = key.permut(generatePermArray(58));
         // Découpage en deux clé
         Bloc[] keys = key.split();      // 28 bits
         // Décalage circulaire de 1 bit vers la gauche
@@ -176,16 +194,15 @@ class Des {
             b = b.permut(this.permInit);
 
             // 2.2 Découpage en deux parties
-            Bloc G = b.left(); Bloc D = b.right(); // G et D sur 32bits
+            Bloc G = b.left(); Bloc D = b.right(); // G et D sur 32 bits
 
             // 2.3 Faire n fois:
             for (int n = 0; n < this.roundQuant; n++) {
                 k[n] = generateKey() ;  // Determination d'une clé Kn sur 48 bits
 
                 Bloc Dn = G.xor(fonction_F(k[n], D)); // Dn+1 = Gn XOR F(Kn, Dn)
-                Bloc Gn = D; // Gn+1 = Dn
+                G = D; // Gn+1 = Dn
                 D = Dn;
-                G = Gn;
             } 
 
 
@@ -215,9 +232,8 @@ class Des {
             // 2.3 Faire n fois:
             for (int n = this.roundQuant-1; n >= 0; n--) {
                 Bloc D = Gn;  // Dn = Gn+1
-                Bloc G = Dn.xor(fonction_F(k[n], D)); // Gn = Dn+1 xor F(Kn, Dn)
+                Gn = Dn.xor(fonction_F(k[n], D)); // Gn = Dn+1 xor F(Kn, Dn)
                 Dn = D;
-                Gn = G;
             } 
 
             
