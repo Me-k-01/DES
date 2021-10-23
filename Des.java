@@ -33,8 +33,8 @@ class Des {
         22, 23, 24, 25, 24, 25, 26, 27,
         28, 29, 28, 29, 30, 31, 32,  1 
     };
-    private List<int[][]> subList = new ArrayList<int[][]>(); // tableau de substitution 
-    private int[][] currS; 
+    private List<int[][]> subList = new ArrayList<int[][]>(); // Tableau de matrice de substitution 
+    private int[][] currS; // Matrice de substitution
 
     public Des() {
         this.roundQuant = 16;
