@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Des {
-    private int[][] S1;
     private Bloc[][] keys; 
     private int roundQuant = 16; // Nombre de ronde
 
@@ -34,20 +33,21 @@ class Des {
         22, 23, 24, 25, 24, 25, 26, 27,
         28, 29, 28, 29, 30, 31, 32,  1 
     };
-
-
+    private List<int[][]> subList = new ArrayList<int[][]>(); // tableau de substitution 
+    private int[][] currS; 
 
     public Des() {
-        S1 = generateSubArray();
         this.roundQuant = 16;
     }
     public Des(int roundQuant) {
+        /* 
         S1 = new int[][]{
             {14, 4, 13, 1, 2, 15, 11, 8, 3, 10, 6, 12, 5, 9, 0, 7},
             {0, 15, 7, 4, 14, 2, 13, 1, 10, 6, 12, 11, 9, 5, 3, 8},
             {4, 1, 14, 8, 13, 6, 2, 11, 15, 12, 9, 7, 3, 10, 5, 0},
             {3, 15, 12, 8, 2, 4, 9, 1, 7, 5, 11, 3, 14, 10, 0, 6, 13}
         };
+        */
         this.roundQuant = roundQuant;
     }
 
@@ -59,13 +59,10 @@ class Des {
         int[][] arr = new int[n][p];
         List<Integer> indicesPoss = new ArrayList<Integer>();
 
-        for (int i = 0; i < max; i++) {
+        for (int i = 0; i < max; i++) 
             indicesPoss.add(i);
-        }
-        for (int i = 0; i < n*p - max; i++) {
-            indicesPoss.add( (int)(Math.random() * max));
-        }
-
+        for (int i = 0; i < n*p - max; i++) 
+            indicesPoss.add((int)(Math.random() * max));
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < p; j++) {
@@ -78,7 +75,8 @@ class Des {
     static public int[] generatePermArray(int size) { // Tableau de permutation
         int[] arr = new int[size];
         List<Integer> indicesPoss = new ArrayList<Integer>();
-        for (int i = 1; i < size+1; i++) indicesPoss.add(i);
+        for (int i = 1; i < size+1; i++) 
+            indicesPoss.add(i);
         
         for (int i = 0; i < size; i++) {
             int index = (int)(Math.random() * indicesPoss.size());
@@ -175,7 +173,7 @@ class Des {
         
         // On passe chaque bloc de 6 bits dans une fonction de substitution
         for (int i = 0; i < Ds.length; i++) {
-            Ds[i] = substitution(Ds[i], this.S1); // 8 Blocs de 4 bits
+            Ds[i] = substitution(Ds[i], this.currS); // 8 Blocs de 4 bits
         }
         return Bloc.combine(Ds); // F(Kn, Dn) sur 32 bit
     }
@@ -186,6 +184,9 @@ class Des {
         // 1 Le texte est fractionné en bloc de 64 bits
         Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(64);
         this.keys = new Bloc[blocs.length][this.roundQuant];
+
+        this.currS = generateSubArray();
+        this.subList.add(currS);
 
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
@@ -220,6 +221,7 @@ class Des {
     public String decrypte(boolean[] decrypte) {
         // Decrypte un message encrypté en un tableau de booléens
         Bloc[] blocs = new Bloc(decrypte).slice(64);
+        this.currS = this.subList.get(0);
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
             Bloc[] k = this.keys[i];
