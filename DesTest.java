@@ -80,7 +80,15 @@ public class DesTest {
     @Test
     public void testDes() {
         Des des = new Des();
-        String msg = "Bonjour a tous";
-        assertEquals(des.decrypte(des.crypte(msg)), msg);
+        String possibleChar = "0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+        for (int i = 0; i < 200; i++) {
+            String msg = "";
+            for (int j = 0; j < (Math.random()*1000) + 1; j++) {
+                char chr = possibleChar.charAt((int)(Math.random()*possibleChar.length()));
+                msg += Character.toString(chr);
+                assertEquals(des.decrypte(des.crypte(msg)), msg.trim());
+            } 
+        }
     }
 }

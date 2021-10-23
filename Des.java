@@ -33,11 +33,12 @@ class Des {
         22, 23, 24, 25, 24, 25, 26, 27,
         28, 29, 28, 29, 30, 31, 32,  1 
     };
-    private List<int[][]> subList = new ArrayList<int[][]>(); // Tableau de matrice de substitution 
+    private int[][][] subArr; // Tableau de matrice de substitution 
     private int[][] currS; // Matrice de substitution
 
     public Des() {
         this.roundQuant = 16;
+        setUpSubstitution();
     }
     public Des(int roundQuant) {
         /* 
@@ -49,6 +50,13 @@ class Des {
         };
         */
         this.roundQuant = roundQuant;
+        setUpSubstitution();
+    }
+    public void setUpSubstitution() {
+        this.subArr = new int[this.roundQuant][4][16];
+        for (int i = 0; i < this.roundQuant; i++) {
+            this.subArr[i] = generateSubArray();
+        }
     }
 
     /////////// Fonction de generation aléatoire  ///////////
@@ -185,8 +193,6 @@ class Des {
         Bloc[] blocs = new Bloc(stringToBinaryArray(msg)).slice(64);
         this.keys = new Bloc[blocs.length][this.roundQuant];
 
-        this.currS = generateSubArray();
-        this.subList.add(currS);
 
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
@@ -200,6 +206,7 @@ class Des {
             // 2.3 Faire n fois:
             for (int n = 0; n < this.roundQuant; n++) {
                 k[n] = generateKey() ;  // Determination d'une clé Kn sur 48 bits
+                this.currS = this.subArr[n];
 
                 Bloc Dn = G.xor(fonction_F(k[n], D)); // Dn+1 = Gn XOR F(Kn, Dn)
                 G = D; // Gn+1 = Dn
@@ -221,7 +228,6 @@ class Des {
     public String decrypte(boolean[] decrypte) {
         // Decrypte un message encrypté en un tableau de booléens
         Bloc[] blocs = new Bloc(decrypte).slice(64);
-        this.currS = this.subList.get(0);
         for (int i = 0; i < blocs.length; i++) {
             Bloc b = blocs[i];
             Bloc[] k = this.keys[i];
@@ -233,6 +239,7 @@ class Des {
             
             // 2.3 Faire n fois:
             for (int n = this.roundQuant-1; n >= 0; n--) {
+                this.currS = this.subArr[n];
                 Bloc D = Gn;  // Dn = Gn+1
                 Gn = Dn.xor(fonction_F(k[n], D)); // Gn = Dn+1 xor F(Kn, Dn)
                 Dn = D;
